@@ -1,12 +1,15 @@
-# convert clean ubuntu 18.04 node to CUDA10 + miniconda + PyTorch node
-# derived from vxlabs ansible deployment framework
+# ansible to configure clean ubuntu 18.04 node with CUDA10 + miniconda +
+# PyTorch + fastai, courtesy of Charl P. Botha and vxlabs.com 2018
 
-# 0. The destination machine should have Ubuntu 18.04 installed. Also,
+# 0. register on the NVIDIA dev site and download the two CUDNN 7.4 or
+#    later DEBs. These should go in the downloads/ subdir of this
+#    repo. Ensure that the names in vars.yml match your downloads.
+# 1. The destination machine should have Ubuntu 18.04 installed. Also,
 #    ssh your_user@machine should let you in without
 #    password. your_user should be able to sudo.
-# 1. edit vars.yml -- change user to your login and sudo user on destination machine
-# 2. edit inventory.cfg -- set the destination machine IP number / hostname under [app]
-# 3. ansible-playbook -i inventory.cfg deploy_full.yml
+# 2. edit vars.yml -- change user to your login and sudo user on destination machine
+# 3. edit inventory.cfg -- set the destination machine IP number / hostname under [app]
+# 4. ansible-playbook -i inventory.cfg deploy_full.yml
 
 ---
 - name: Prepare homedir
@@ -82,8 +85,8 @@
     - name: Install CUDNN debs
       action: apt deb={{ item }} state=installed
       with_items:
-        - "{{ home }}/Downloads/libcudnn7_7.4.1.5-1+cuda10.0_amd64.deb"
-        - "{{ home }}/Downloads/libcudnn7-dev_7.4.1.5-1+cuda10.0_amd64.deb"
+        - "{{ downloads_dir }}/{{ cudnn }}"
+        - "{{ downloads_dir }}/{{ cudnn_dev }}"        
 
 - name: Setup miniconda3 with PyTorch and fastai
   hosts: app
