@@ -63,6 +63,7 @@
         packages:
         - apt-utils
         - build-essential
+        - curl
         - dkms
         - htop
         - tmux
@@ -76,15 +77,20 @@
         - emacs26
         - emacs26-el
 
+    # some systems, e.g. those on nvidia-docker, already have CUDA installed
+    # ansible-playbook -i inventory.cfg deploy.yml --skip-tags "cuda"
     - name: Add NVIDIA CUDA key
+      tags: cuda
       apt_key:
         url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
         
     - name: Install NVIDIA CUDA 10 network deb from the network
+      tags: cuda
       apt:
         deb: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
 
     - name: Install the rest of CUDA based on network deb's config
+      tags: cuda
       apt:
         update_cache: yes
         name: cuda
