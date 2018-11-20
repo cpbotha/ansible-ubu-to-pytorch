@@ -1,0 +1,130 @@
+# convert clean ubuntu 18.04 node to CUDA10 + miniconda + PyTorch node
+# derived from vxlabs ansible deployment framework
+
+# 0. The destination machine should have Ubuntu 18.04 installed. Also,
+#    ssh your_user@machine should let you in without
+#    password. your_user should be able to sudo.
+# 1. edit vars.yml -- change user to your login and sudo user on destination machine
+# 2. edit inventory.cfg -- set the destination machine IP number / hostname under [app]
+# 3. ansible-playbook -i inventory.cfg deploy_full.yml
+
+---
+- name: Prepare homedir
+  hosts: app
+  become: no
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Push over my Emacs configuration
+      synchronize:
+        # lots of symlinks, rather copy the files they point to
+        copy_links: yes
+        src: ~/.emacs.d
+        dest: "{{ home }}/"
+    
+    - name: Push over tmux configuration
+      template:
+        src: configs/.tmux.conf
+        dest: "{{ home }}/.tmux.conf"
+    
+    # this will copy the contents of downloads/ over here into ~/Downloads/ on the remote
+    - name: Copy CUDNN debs to remote
+      copy:
+        src: downloads/
+        dest: "{{ home }}/Downloads"
+        
+
+- name: Basic system setup
+  hosts: app
+  become: yes
+  
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Add Emacs 26 PPA
+      apt_repository:
+        repo: ppa:kelleyk/emacs
+
+    # do the equivalent of apt-get update && apt-get upgrade
+    - name: Make sure whole system is up to date
+      action: apt upgrade=yes update-cache=yes
+
+    # https://docs.ansible.com/ansible/latest/modules/apt_module.html
+    - name: Install required system packages
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - build-essential
+        - dkms
+        - htop
+        - tmux
+        - joe
+        - mosh
+        - emacs26
+        - emacs26-el
+
+    - name: Add NVIDIA CUDA key
+      apt_key:
+        url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+        
+    - name: Install NVIDIA CUDA 10 network deb from the network
+      apt:
+        deb: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+
+    - name: Install the rest of CUDA based on network deb's config
+      apt:
+        update_cache: yes
+        name: cuda
+
+    - name: Install CUDNN debs
+      action: apt deb={{ item }} state=installed
+      with_items:
+        - "{{ home }}/Downloads/libcudnn7_7.4.1.5-1+cuda10.0_amd64.deb"
+        - "{{ home }}/Downloads/libcudnn7-dev_7.4.1.5-1+cuda10.0_amd64.deb"
+
+- name: Setup miniconda3 with PyTorch and fastai
+  hosts: app
+  become: no
+  # you can run ONLY this play by doing:
+  # ansible-playbook -i inventory.cfg deploy.yml --tags "miniconda3"
+  tags: miniconda3
+  vars_files:
+    - vars.yml
+
+  tasks:
+    # this will only download if not already there
+    - name: Download miniconda3 installer
+      get_url:
+        url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        dest: "{{ home }}/Downloads/Miniconda3-latest-Linux-x86_64.sh"
+
+    # this will only download if not already there
+    - name: Download PyTorch 1.0 preview CUDA10 wheel
+      get_url:
+        url: "http://vxlabs.com/downloads/{{ torch_fn }}"
+        dest: "{{ torch_path }}"
+
+    - name: Install miniconda3
+      command: "/bin/bash {{ home }}/Downloads/Miniconda3-latest-Linux-x86_64.sh -b"
+      args:
+        creates: "{{ home }}/miniconda3"
+
+    - name: Add conda config to .bashrc
+      lineinfile:
+        path: "{{ home }}/.bashrc"
+        line: ". ~/miniconda3/etc/profile.d/conda.sh"
+
+    # only do this if this is a new miniconda3 installation
+    - name: Install first PyTorch environment
+      command: "{{ home }}/miniconda3/bin/conda create -y -c mingfeima -n pt python=3.7 numpy mkl mkldnn scikit-learn pandas"
+      args:
+        creates: "{{ home }}/miniconda3/envs/pt"
+
+    # only do this if this is a new miniconda3 installation
+    - name: Install PyTorch 1.0 preview wheel + fastai
+      tags: ptenv
+      command: "{{ home }}/miniconda3/envs/pt/bin/pip install {{ torch_path }} fastai"
+
