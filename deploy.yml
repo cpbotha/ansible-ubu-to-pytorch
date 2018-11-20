@@ -9,7 +9,7 @@
 #    password. your_user should be able to sudo.
 # 2. edit vars.yml -- change user to your login and sudo user on destination machine
 # 3. edit inventory.cfg -- set the destination machine IP number / hostname under [app]
-# 4. ansible-playbook -i inventory.cfg deploy_full.yml
+# 4. ansible-playbook -i inventory.cfg deploy.yml
 
 ---
 - name: Prepare homedir
@@ -110,6 +110,7 @@
         url: "http://vxlabs.com/downloads/{{ torch_fn }}"
         dest: "{{ torch_path }}"
 
+    # this will only run if miniconda3 is not already there yet (creates: ...)
     - name: Install miniconda3
       command: "/bin/bash {{ home }}/Downloads/Miniconda3-latest-Linux-x86_64.sh -b"
       args:
@@ -128,6 +129,12 @@
 
     # only do this if this is a new miniconda3 installation
     - name: Install PyTorch 1.0 preview wheel + fastai
-      tags: ptenv
       command: "{{ home }}/miniconda3/envs/pt/bin/pip install {{ torch_path }} fastai"
+
+    # PyTorch wheel needs to have LD_LIBRARY_PATH set else it can't find MKL and friends
+    - name: Configure LD_LIBRARY_PATH for the PyTorch wheel
+      lineinfile:
+        path: "{{ home }}/miniconda3/envs/pt/etc/conda/activate.d/ld_library_path.sh"
+        create: yes
+        line: "export LD_LIBRARY_PATH=$CONDA_PREFIX/lib"
 
