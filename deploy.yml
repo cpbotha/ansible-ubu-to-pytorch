@@ -123,7 +123,7 @@
 
     # only do this if this is a new miniconda3 installation
     - name: Install first PyTorch environment
-      command: "{{ home }}/miniconda3/bin/conda create -y -c mingfeima -n pt python=3.7 numpy mkl mkldnn scikit-learn pandas"
+      command: "{{ home }}/miniconda3/bin/conda create -y -c mingfeima -n pt python=3.7 numpy mkl mkldnn scikit-learn pandas ipython"
       args:
         creates: "{{ home }}/miniconda3/envs/pt"
 
