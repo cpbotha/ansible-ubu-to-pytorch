@@ -4,6 +4,7 @@
 # 0. register on the NVIDIA dev site and download the two CUDNN 7.4 or
 #    later DEBs. These should go in the downloads/ subdir of this
 #    repo. Ensure that the names in vars.yml match your downloads.
+#    - everything in downloads/ will be copied over to ~/Downloads. Use this!
 # 1. The destination machine should have Ubuntu 18.04 installed. Also,
 #    ssh your_user@machine should let you in without
 #    password. your_user should be able to sudo.
@@ -32,7 +33,7 @@
         dest: "{{ home }}/.tmux.conf"
     
     # this will copy the contents of downloads/ over here into ~/Downloads/ on the remote
-    - name: Copy CUDNN debs to remote
+    - name: Copy contents of downloads (including CUDNN debs) to remote ~/Downloads
       copy:
         src: downloads/
         dest: "{{ home }}/Downloads"
@@ -60,12 +61,18 @@
         name: "{{ packages }}"
       vars:
         packages:
+        - apt-utils
         - build-essential
         - dkms
         - htop
         - tmux
         - joe
+        - locales
         - mosh
+        - p7zip-full
+        - software-properties-common
+        - unzip
+        - zip
         - emacs26
         - emacs26-el
 
@@ -83,7 +90,7 @@
         name: cuda
 
     - name: Install CUDNN debs
-      action: apt deb={{ item }} state=installed
+      action: apt deb={{ item }} state=present
       with_items:
         - "{{ downloads_dir }}/{{ cudnn }}"
         - "{{ downloads_dir }}/{{ cudnn_dev }}"        
