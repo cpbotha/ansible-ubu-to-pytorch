@@ -16,6 +16,7 @@
 - name: Prepare homedir
   hosts: app
   become: no
+  user: "{{ user }}"
   vars_files:
     - vars.yml
 
@@ -42,7 +43,7 @@
 - name: Basic system setup
   hosts: app
   become: yes
-  
+  user: "{{ user }}"
   vars_files:
     - vars.yml
 
@@ -104,6 +105,7 @@
 - name: Setup miniconda3 with PyTorch and fastai
   hosts: app
   become: no
+  user: "{{ user }}"
   # you can run ONLY this play by doing:
   # ansible-playbook -i inventory.cfg deploy.yml --tags "miniconda3"
   tags: miniconda3
