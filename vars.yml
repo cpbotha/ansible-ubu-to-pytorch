@@ -1,6 +1,6 @@
 ---
 
-user: "cpbotha"
+user: "paperspace"
 torch_fn: "torch-1.0.0a0+d02781a-cp37-cp37m-linux_x86_64.whl"
 cudnn: "libcudnn7_7.4.1.5-1+cuda10.0_amd64.deb"
 cudnn_dev: "libcudnn7-dev_7.4.1.5-1+cuda10.0_amd64.deb"
