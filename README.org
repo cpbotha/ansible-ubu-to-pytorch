@@ -2,15 +2,16 @@
 
 With this simple Ansible script, you'll be able to convert a clean
 Ubuntu 18.04 image (as supplied by Google Compute Engine or
-PaperSpace) into a CUDA 10, PyTorch 1.0rc, fastai, miniconda3
-powerhouse, ready to live the deep learning dream.
+[[https://www.paperspace.com/][PaperSpace]]) into a CUDA 10, PyTorch 1.0rc, [[https://github.com/fastai/fastai][fastai 1.0.x]], miniconda3
+powerhouse, ready to live the (mixed-precision!) deep learning dream.
 
 After running the script, you'll be able to ssh or mosh in, type
 =conda activate pt=, and be on your way!
 
-=cpbotha@vxlabs.com= built this to scratch his own itch, but would be
-happy if you too find it useful. Issues and PRs might get looked at,
-or not.
+=cpbotha@vxlabs.com= built this to scratch his own itch
+(mixed-precision neural networks on NVIDIA's new TensorCores), but
+would be happy if you too find it useful. Issues and PRs might get
+looked at, or not.
 
 * Step by step instructions
 
