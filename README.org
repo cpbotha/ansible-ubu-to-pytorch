@@ -1,0 +1,60 @@
+#+TITLE: Ansible script to convert clean Ubuntu 18.04 to CUDA 10, PyTorch 1.0rc, fastai, miniconda3 deep learning machine.
+
+With this simple Ansible script, you'll be able to convert a clean
+Ubuntu 18.04 image (as supplied by Google Compute Engine or
+PaperSpace) into a CUDA 10, PyTorch 1.0rc, fastai, miniconda3
+powerhouse, ready to live the deep learning dream.
+
+After running the script, you'll be able to ssh or mosh in, type
+=conda activate pt=, and be on your way!
+
+=cpbotha@vxlabs.com= built this to scratch his own itch, but would be
+happy if you too find it useful. Issues and PRs might get looked at,
+or not.
+
+* Step by step instructions
+
+** Install ansible
+
+#+BEGIN_SRC shell
+pip3 install --user --upgrade ansible
+# double-check that this gives you the Python 3 version
+which ansible-playbook
+#+END_SRC
+
+** Configure this script's vars.yml and inventory.cfg
+
+These instructions are reproduced from the comments at the start of
+=deploy.yml=:
+
+1. Register on the NVIDIA dev site and download the two CUDNN 7.4 or
+   later DEBs.
+   - These two debs should go in the =downloads/= subdir of this repo.
+   - Ensure that the names in =vars.yml= match your downloads.
+   - Everything in downloads/ will be copied over to ~/Downloads. Use
+     this to your advantage!
+2. The destination machine should have Ubuntu 18.04 installed. Importantly,
+   =ssh your_user@the_machine= should let you in without password, and =your_user=
+   should be able to sudo without entering a password. Test this!
+3. Edit =vars.yml=: Change user to your login and sudo user on the destination machine
+4. Edit =inventory.cfg=: Set the destination machine IP number / hostname under
+   =[app]=
+
+** Run the script
+
+Start the whole business:
+
+#+BEGIN_SRC shell
+ansible-playbook -i inventory.cfg deploy.yml
+#+END_SRC
+
+When I do this with a V100-equipped paperspace machine with 8 cores
+and 30GB of RAM, it takes about 13 minutes from start to finish.
+
+After this, you will have to reboot the machine.
+
+** Use the environment
+
+=ssh= in to the machine. Activate the environment with =conda activate
+pt=. Do what you normally do!
+
