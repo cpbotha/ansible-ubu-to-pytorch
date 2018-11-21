@@ -2,7 +2,7 @@
 
 With this simple Ansible script, you'll be able to convert a clean
 Ubuntu 18.04 image (as supplied by Google Compute Engine or
-[[https://www.paperspace.com/][PaperSpace]]) into a CUDA 10, PyTorch 1.0rc, [[https://github.com/fastai/fastai][fastai 1.0.x]], miniconda3
+[[https://www.paperspace.com/][PaperSpace]]) into a CUDA 10, [[https://pytorch.org/][PyTorch 1.0rc]], [[https://github.com/fastai/fastai][fastai 1.0.x]], miniconda3
 powerhouse, ready to live the (mixed-precision!) deep learning dream.
 
 After running the script, you'll be able to ssh or mosh in, type
@@ -12,6 +12,9 @@ After running the script, you'll be able to ssh or mosh in, type
 (mixed-precision neural networks on NVIDIA's new TensorCores), but
 would be happy if you too find it useful. Issues and PRs might get
 looked at, or not.
+
+This script currently makes use of [[https://vxlabs.com/2018/11/04/pytorch-1-0-preview-nov-4-2018-packages-with-full-cuda-10-support-for-your-ubuntu-18-04-x86_64-systems/][the vxlabs.com build of PyTorch
+1.0]], because we need full CUDA 10 for the new TensorCores.
 
 * Step by step instructions
 
