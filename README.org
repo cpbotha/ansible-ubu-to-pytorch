@@ -11,7 +11,8 @@ After running the script, you'll be able to ssh or mosh in, type
 =cpbotha@vxlabs.com= built this to scratch his own itch
 (mixed-precision neural networks on NVIDIA's new TensorCores), but
 would be happy if you too find it useful. Issues and PRs might get
-looked at, or not.
+looked at, or not. There's also an accompanying [[https://vxlabs.com/2018/11/21/a-simple-ansible-script-to-convert-a-clean-ubuntu-18-04-to-a-cuda-10-pytorch-1-0rc-fastai-miniconda3-deep-learning-machine/][blog post with
+screencast]].
 
 This script currently makes use of [[https://vxlabs.com/2018/11/04/pytorch-1-0-preview-nov-4-2018-packages-with-full-cuda-10-support-for-your-ubuntu-18-04-x86_64-systems/][the vxlabs.com build of PyTorch
 1.0]], because we need full CUDA 10 for the new TensorCores.
@@ -61,4 +62,20 @@ After this, you will have to reboot the machine.
 
 =ssh= in to the machine. Activate the environment with =conda activate
 pt=. Do what you normally do!
+
+* Updates
+
+** 2018-11-24
+
+Updated to latest 2018-11-24 build of PyTorch 1.0 preview with the new
+magma 2.4.0 packages.
+
+To update an existing install with the new PyTorch 1.0 build, you can
+either just re-run the whole =deploy.yml= playbook, or you can run
+just the miniconda3-related tasks like this:
+
+#+BEGIN_SRC shell
+ansible-playbook -i inventory.cfg deploy.yml --tags "miniconda3"
+#+END_SRC
+
 
