@@ -65,6 +65,11 @@ pt=. Do what you normally do!
 
 * Updates
 
+** 2018-12-06
+
+Updated to latest 2018-12-06 build of PyTorch 1.0 preview. See below
+for update instructions.
+
 ** 2018-11-24
 
 Updated to latest 2018-11-24 build of PyTorch 1.0 preview with the new
