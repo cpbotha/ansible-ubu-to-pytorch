@@ -119,12 +119,6 @@
         url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
         dest: "{{ home }}/Downloads/Miniconda3-latest-Linux-x86_64.sh"
 
-    # this will only download if not already there
-    - name: Download PyTorch 1.0 preview CUDA10 wheel
-      get_url:
-        url: "http://vxlabs.com/downloads/{{ torch_fn }}"
-        dest: "{{ torch_path }}"
-
     # this will only run if miniconda3 is not already there yet (creates: ...)
     - name: Install miniconda3
       command: "/bin/bash {{ home }}/Downloads/Miniconda3-latest-Linux-x86_64.sh -b"
@@ -142,14 +136,21 @@
       args:
         creates: "{{ home }}/miniconda3/envs/pt"
 
-    # only do this if this is a new miniconda3 installation
-    - name: Install PyTorch 1.0 preview wheel + fastai
-      command: "{{ home }}/miniconda3/envs/pt/bin/pip install {{ torch_path }} fastai"
+    # previous version of this script installed my own build of 1.0 preview as 1.0 was not out yet
+    # make sure to uninstall that, then install official conda packages in next step
+    - name: Uninstall previous torch wheel installation
+      command: "{{ home }}/miniconda3/envs/pt/bin/pip uninstall -y torch"
+
+    - name: Install PyTorch 1.0 and friends using conda into pt environment
+      command: "{{ home }}/miniconda3/bin/conda install -y -n pt pytorch torchvision cuda100 -c pytorch"
+
+    - name: Install / upgrade to latest fastai
+      command: "{{ home }}/miniconda3/envs/pt/bin/pip install --upgrade fastai"
 
     # PyTorch wheel needs to have LD_LIBRARY_PATH set else it can't find MKL and friends
-    - name: Configure LD_LIBRARY_PATH for the PyTorch wheel
-      lineinfile:
-        path: "{{ home }}/miniconda3/envs/pt/etc/conda/activate.d/ld_library_path.sh"
-        create: yes
-        line: "export LD_LIBRARY_PATH=$CONDA_PREFIX/lib"
+    # - name: Configure LD_LIBRARY_PATH for the PyTorch wheel
+    #   lineinfile:
+    #     path: "{{ home }}/miniconda3/envs/pt/etc/conda/activate.d/ld_library_path.sh"
+    #     create: yes
+    #     line: "export LD_LIBRARY_PATH=$CONDA_PREFIX/lib"
 
