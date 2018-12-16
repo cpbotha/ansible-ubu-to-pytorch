@@ -1,8 +1,8 @@
-#+TITLE: Ansible script to convert clean Ubuntu 18.04 to CUDA 10, PyTorch 1.0rc, fastai, miniconda3 deep learning machine.
+#+TITLE: Ansible script to convert clean Ubuntu 18.04 to CUDA 10, PyTorch 1.0, fastai, miniconda3 deep learning machine.
 
 With this simple Ansible script, you'll be able to convert a clean
 Ubuntu 18.04 image (as supplied by Google Compute Engine or
-[[https://www.paperspace.com/][PaperSpace]]) into a CUDA 10, [[https://pytorch.org/][PyTorch 1.0rc]], [[https://github.com/fastai/fastai][fastai 1.0.x]], miniconda3
+[[https://www.paperspace.com/][PaperSpace]]) into a CUDA 10, [[https://pytorch.org/][PyTorch 1.0]], [[https://github.com/fastai/fastai][fastai 1.0.x]], miniconda3
 powerhouse, ready to live the (mixed-precision!) deep learning dream.
 
 After running the script, you'll be able to ssh or mosh in, type
