@@ -14,8 +14,8 @@ would be happy if you too find it useful. Issues and PRs might get
 looked at, or not. There's also an accompanying [[https://vxlabs.com/2018/11/21/a-simple-ansible-script-to-convert-a-clean-ubuntu-18-04-to-a-cuda-10-pytorch-1-0rc-fastai-miniconda3-deep-learning-machine/][blog post with
 screencast]].
 
-This script currently makes use of [[https://vxlabs.com/2018/11/04/pytorch-1-0-preview-nov-4-2018-packages-with-full-cuda-10-support-for-your-ubuntu-18-04-x86_64-systems/][the vxlabs.com build of PyTorch
-1.0]], because we need full CUDA 10 for the new TensorCores.
+This script has now updated to using the official conda package of
+PyTorch 1.0.
 
 * Step by step instructions
 
@@ -64,6 +64,10 @@ After this, you will have to reboot the machine.
 pt=. Do what you normally do!
 
 * Updates
+
+** 2018-12-06
+
+Updated to official PyTorch 1.0 conda packages!
 
 ** 2018-12-06
 
